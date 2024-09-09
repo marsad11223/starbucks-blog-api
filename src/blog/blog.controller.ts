@@ -7,6 +7,8 @@ import {
   Put,
   Delete,
   Get,
+  Query,
+  ParseIntPipe,
 } from '@nestjs/common';
 
 // project imports
@@ -14,6 +16,7 @@ import { BlogPost } from 'src/schemas/blog.schema';
 import { CreateBlogDto } from './dtos/create-blog.dto';
 import { UpdateBlogDto } from './dtos/update-blog.dto';
 import { BlogService } from './blog.service';
+import { PaginatedResponse } from 'src/interfaces/paginated-response.interface';
 
 @Controller('blogs')
 export class BlogController {
@@ -25,8 +28,11 @@ export class BlogController {
   }
 
   @Get()
-  async findAll(): Promise<BlogPost[]> {
-    return this.blogService.findAll();
+  async findAll(
+    @Query('page', ParseIntPipe) page: number = 1,
+    @Query('limit', ParseIntPipe) limit: number = 10,
+  ): Promise<PaginatedResponse<BlogPost>> {
+    return this.blogService.findAll(page, limit);
   }
 
   @Get(':id')

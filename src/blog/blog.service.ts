@@ -14,6 +14,7 @@ import { Model } from 'mongoose';
 import { CreateBlogDto } from './dtos/create-blog.dto';
 import { UpdateBlogDto } from './dtos/update-blog.dto';
 import { BlogPost } from 'src/schemas/blog.schema';
+import { PaginatedResponse } from 'src/interfaces/paginated-response.interface';
 
 @Injectable()
 export class BlogService {
@@ -30,9 +31,36 @@ export class BlogService {
     }
   }
 
-  async findAll(): Promise<BlogPost[]> {
+  async findAll(
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<PaginatedResponse<BlogPost>> {
     try {
-      return await this.blogModel.find().exec();
+      // Validate and set default values
+      const pageNumber = Number.isInteger(page) && page > 0 ? page : 1;
+      const limitNumber = Number.isInteger(limit) && limit > 0 ? limit : 10;
+
+      // Calculate pagination values
+      const skip = (pageNumber - 1) * limitNumber;
+      const [data, totalDocuments] = await Promise.all([
+        this.blogModel
+          .find()
+          .skip(skip)
+          .limit(limitNumber)
+          .sort({ published_at: -1 }) // Sort by published_at in descending order
+          .exec(),
+        this.blogModel.countDocuments().exec(),
+      ]);
+
+      const totalPages = Math.ceil(totalDocuments / limitNumber);
+
+      return {
+        page: pageNumber,
+        limit: limitNumber,
+        totalDocuments,
+        totalPages,
+        data,
+      };
     } catch (error) {
       throw new InternalServerErrorException('Error fetching blog posts');
     }
