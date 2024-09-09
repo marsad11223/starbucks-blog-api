@@ -7,6 +7,7 @@ import { APP_PIPE } from '@nestjs/core';
 // project imports
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { BlogModule } from './blog/blog.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { AppService } from './app.service';
       },
       inject: [ConfigService],
     }),
+    BlogModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_PIPE, useClass: ValidationPipe }],
