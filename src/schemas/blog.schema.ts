@@ -3,7 +3,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
 // third-party imports
-import { IsString, IsDate, IsUrl } from 'class-validator';
+import { IsString, IsUrl } from 'class-validator';
 
 @Schema({ timestamps: true }) // Automatically adds createdAt and updatedAt fields
 export class BlogPost extends Document {
@@ -14,10 +14,6 @@ export class BlogPost extends Document {
   @Prop({ required: true })
   @IsString()
   content: string; // HTML content
-
-  @Prop({ required: true })
-  @IsDate()
-  published_at: Date;
 
   @Prop({ required: true })
   @IsUrl()

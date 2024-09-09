@@ -8,9 +8,6 @@ export class CreateBlogDto {
   @IsString()
   content: string; // HTML content
 
-  @IsDate()
-  published_at: Date;
-
   @IsUrl()
   coverImage: string; // URL for the cover image
 
